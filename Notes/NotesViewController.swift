@@ -9,27 +9,15 @@ import UIKit
 
 class NotesViewController: UIViewController, EditingNotesDelegate {
     
+    var dataTuplesArray = [Model]()
     var notesTuplesArray = [(String, String)]()
     var editingVC = EditingNotesViewController()
     
-   
-    
-    var notesLabel: UILabel = {
-        let notesLabel = UILabel()
-        notesLabel.translatesAutoresizingMaskIntoConstraints = false
-        notesLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 60)
-        notesLabel.textAlignment = .center
-        notesLabel.textColor = .black
-        notesLabel.numberOfLines = 0
-        notesLabel.text = "No notes yet"
-        
-        return notesLabel
-    }()
+    let userDefaults = UserDefaults.standard
     
     var notesTableView: UITableView = {
         let notesTableView = UITableView(frame: .zero, style: .grouped)
         notesTableView.translatesAutoresizingMaskIntoConstraints = false
-        notesTableView.isHidden = true
         notesTableView.separatorStyle = .none
         notesTableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         notesTableView.backgroundColor = backgroundCollor
@@ -38,18 +26,38 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        if let fetchedData = userDefaults.data(forKey: "data") {
+            let fetchedTuplesArray = try! PropertyListDecoder().decode([Model].self, from: fetchedData) //так как нельзя работать с тюплами в userDefaults кодируем тайтл и текст в дату, сохраняем ее в юзерДелфол, потом при запуске декодим
+            dataTuplesArray = fetchedTuplesArray
+            for i in 0..<dataTuplesArray.count {
+                let title = dataTuplesArray[i].title
+                let text = dataTuplesArray[i].text
+                let tuple = (title, text)
+                notesTuplesArray.append(tuple)
+            }
+            print(dataTuplesArray)
+            
+        } else {
+            notesTuplesArray.append(("New Note", "New Text"))
+        }
         
         view.backgroundColor = backgroundCollor
         self.editingVC.delegate = self
         notesTableView.delegate = self
         notesTableView.dataSource = self
-        view.addSubview(notesLabel)
         view.addSubview(notesTableView)
         navBarSetUp()
         addButtonNote()
         addConstraints()
         
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        let encodedData = try! PropertyListEncoder().encode(dataTuplesArray)
+        UserDefaults.standard.set(encodedData, forKey: "data")
     }
 
     func navBarSetUp() {
@@ -78,20 +86,21 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
         constraints.append(notesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor))
         constraints.append(notesTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20)) //make table view anchor to navBar
         
-        //constraints for Label
-        constraints.append(notesLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor))
-        constraints.append(notesLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor))
-        
         NSLayoutConstraint.activate(constraints)
     }
     
     //MARK: - Delegate
     
     func obtainNewNoteData(title: String, text: String) {
-        self.notesLabel.isHidden = true
-        self.notesTableView.isHidden = false
+        
         let notesTuple = (title, text)
         notesTuplesArray.append(notesTuple)
+        
+        dataTuplesArray.append(Model(title: title, text: text))
+        
+        
+        
+//        let savedData = userDefaults.set
         UIRefreshControl().endRefreshing()
         let indexPathNewRow = IndexPath(row: notesTuplesArray.count - 1, section: 0)
         notesTableView.insertRows(at: [indexPathNewRow], with: .automatic)
@@ -142,6 +151,7 @@ extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
         if editingStyle == .delete {
             tableView.beginUpdates()
             notesTuplesArray.remove(at: indexPath.row)
+            dataTuplesArray.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
             tableView.endUpdates()
         }

@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+struct Model: Codable {
+    var title: String
+    var text: String
+}
+
+
