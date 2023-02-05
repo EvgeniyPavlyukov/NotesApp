@@ -17,19 +17,17 @@ class EditingNotesViewController: UIViewController {
     
     var noteTitleTextField: UITextField = {
         var noteTitleTextField = UITextField()
+        noteTitleTextField.backgroundColor = backgroundCollor
         noteTitleTextField.translatesAutoresizingMaskIntoConstraints = false
         noteTitleTextField.borderStyle = .roundedRect
         noteTitleTextField.layer.cornerRadius = 5.0
         noteTitleTextField.layer.borderColor = CGColor(gray: 1, alpha: 0)
         noteTitleTextField.layer.borderWidth = 1.5
-        noteTitleTextField.backgroundColor = UIColor.gray.withAlphaComponent(0.1)
         noteTitleTextField.attributedPlaceholder = NSAttributedString(string: "Put Title Of Your Note",
                                                                       attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
         noteTitleTextField.textColor = .black
-        
-        //поменять размер шрифта
-        
-        
+        noteTitleTextField.font = .boldSystemFont(ofSize: 30)
+        noteTitleTextField.adjustsFontSizeToFitWidth = true
         
         return noteTitleTextField
     }()
@@ -37,11 +35,10 @@ class EditingNotesViewController: UIViewController {
     var noteContentTextView: UITextView = {
         var noteContentTextView = UITextView()
         noteContentTextView.translatesAutoresizingMaskIntoConstraints = false
-        noteContentTextView.backgroundColor = UIColor.gray.withAlphaComponent(0.05)
+        noteContentTextView.backgroundColor = UIColor(red: 245/255, green: 244/255, blue: 241/255, alpha: 1)
         noteContentTextView.textColor = .lightGray
         noteContentTextView.text = "Please type your note"
-        
-        //Добавить плэйсхолдер
+        noteContentTextView.font = .systemFont(ofSize: 25)
         
         return noteContentTextView
     }()
@@ -57,12 +54,14 @@ class EditingNotesViewController: UIViewController {
     }
     
     func setUpNavBar() {
-        view.backgroundColor = .white
-        self.navigationItem.largeTitleDisplayMode = .never
-        let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+        view.backgroundColor = backgroundCollor
+        navigationItem.largeTitleDisplayMode = .never
+        let textAttributes = [NSAttributedString.Key.foregroundColor: textColorConstant]
         navigationController?.navigationBar.titleTextAttributes = textAttributes
         title = "New Note"
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveNewNote))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveNewNote))
+        navigationItem.rightBarButtonItem?.tintColor = colorForButtons
+        self.navigationController?.navigationBar.tintColor = colorForButtons
     }
     
     @objc func saveNewNote() {
@@ -104,7 +103,7 @@ class EditingNotesViewController: UIViewController {
 
 extension EditingNotesViewController: UITextViewDelegate, UITextFieldDelegate {
     
-    func textViewDidBeginEditing(_ textView: UITextView) {
+    func textViewDidBeginEditing(_ textView: UITextView) { //это имитация плейсхолдера
         if noteContentTextView.textColor == UIColor.lightGray {
             textView.text = nil
             textView.textColor = UIColor.black

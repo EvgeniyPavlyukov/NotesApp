@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3B283F35298D838B00B581A2 /* EditingNotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B283F34298D838B00B581A2 /* EditingNotesViewController.swift */; };
+		3B2C6A58298FD6FE00F90426 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C6A57298FD6FE00F90426 /* Colors.swift */; };
 		3BE7B5CE298D5C9F00DF31EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE7B5CD298D5C9F00DF31EB /* AppDelegate.swift */; };
 		3BE7B5D0298D5C9F00DF31EB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE7B5CF298D5C9F00DF31EB /* SceneDelegate.swift */; };
 		3BE7B5D2298D5C9F00DF31EB /* NotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE7B5D1298D5C9F00DF31EB /* NotesViewController.swift */; };
@@ -18,6 +19,7 @@
 
 /* Begin PBXFileReference section */
 		3B283F34298D838B00B581A2 /* EditingNotesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingNotesViewController.swift; sourceTree = "<group>"; };
+		3B2C6A57298FD6FE00F90426 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		3BE7B5CA298D5C9F00DF31EB /* Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Notes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BE7B5CD298D5C9F00DF31EB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3BE7B5CF298D5C9F00DF31EB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 				3BE7B5D6298D5CA900DF31EB /* Assets.xcassets */,
 				3BE7B5D8298D5CA900DF31EB /* LaunchScreen.storyboard */,
 				3BE7B5DB298D5CA900DF31EB /* Info.plist */,
+				3B2C6A57298FD6FE00F90426 /* Colors.swift */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -142,6 +145,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3BE7B5D2298D5C9F00DF31EB /* NotesViewController.swift in Sources */,
+				3B2C6A58298FD6FE00F90426 /* Colors.swift in Sources */,
 				3BE7B5CE298D5C9F00DF31EB /* AppDelegate.swift in Sources */,
 				3BE7B5D0298D5C9F00DF31EB /* SceneDelegate.swift in Sources */,
 				3B283F35298D838B00B581A2 /* EditingNotesViewController.swift in Sources */,

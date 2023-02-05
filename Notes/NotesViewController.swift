@@ -12,6 +12,8 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
     var notesTuplesArray = [(String, String)]()
     var editingVC = EditingNotesViewController()
     
+   
+    
     var notesLabel: UILabel = {
         let notesLabel = UILabel()
         notesLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -25,15 +27,12 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
     }()
     
     var notesTableView: UITableView = {
-        let notesTableView = UITableView()
+        let notesTableView = UITableView(frame: .zero, style: .grouped)
         notesTableView.translatesAutoresizingMaskIntoConstraints = false
-        notesTableView.backgroundColor = .white
         notesTableView.isHidden = true
-        notesTableView.separatorStyle = UITableViewCell.SeparatorStyle.singleLine
-        notesTableView.separatorColor = .gray
+        notesTableView.separatorStyle = .none
         notesTableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-        notesTableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
+        notesTableView.backgroundColor = backgroundCollor
         return notesTableView
     }()
 
@@ -41,6 +40,7 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
         super.viewDidLoad()
         
         
+        view.backgroundColor = backgroundCollor
         self.editingVC.delegate = self
         notesTableView.delegate = self
         notesTableView.dataSource = self
@@ -54,14 +54,14 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
 
     func navBarSetUp() {
         navigationController?.navigationBar.prefersLargeTitles = true
-        view.backgroundColor = .white
-        let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+        let textAttributes = [NSAttributedString.Key.foregroundColor: textColorConstant]
         navigationController?.navigationBar.largeTitleTextAttributes = textAttributes
         self.title = "Notes"
     }
     
     func addButtonNote() {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNote))
+        self.navigationItem.rightBarButtonItem?.tintColor = colorForButtons
         
     }
     
@@ -73,10 +73,10 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
         var constraints = [NSLayoutConstraint]()
         
         //constraint for TableView
-        constraints.append(notesTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor))
-        constraints.append(notesTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor))
+        constraints.append(notesTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20))
+        constraints.append(notesTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20))
         constraints.append(notesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor))
-        constraints.append(notesTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)) //make table view anchor to navBar
+        constraints.append(notesTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20)) //make table view anchor to navBar
         
         //constraints for Label
         constraints.append(notesLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor))
@@ -90,10 +90,8 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
     func obtainNewNoteData(title: String, text: String) {
         self.notesLabel.isHidden = true
         self.notesTableView.isHidden = false
-        
-        var notesTuple = (title, text)
+        let notesTuple = (title, text)
         notesTuplesArray.append(notesTuple)
-        
         UIRefreshControl().endRefreshing()
         let indexPathNewRow = IndexPath(row: notesTuplesArray.count - 1, section: 0)
         notesTableView.insertRows(at: [indexPathNewRow], with: .automatic)
@@ -105,6 +103,8 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
 
 
 extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return notesTuplesArray.count ?? 0
@@ -118,12 +118,33 @@ extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
         let text = notesTuplesArray[indexPath.row].1
         var cellProperties = cell.defaultContentConfiguration()
         cellProperties.text = label
+        cellProperties.textProperties.font = .boldSystemFont(ofSize: 20)
+        cellProperties.textProperties.color = .black
+        cellProperties.secondaryTextProperties.color = .black
         cellProperties.secondaryText = text
         cell.contentConfiguration = cellProperties
-        cell.contentView.backgroundColor = UIColor(red: 252/255, green: 232/255, blue: 171/255, alpha: 100/255)
-                
+        cell.contentView.backgroundColor = .white
+        cell.contentView.layer.cornerRadius = 11
+        let view = UIView(frame: cell.bounds)
+        view.backgroundColor = backgroundCollor
+        cell.backgroundView = view //настраиваем задний цвет вьюхи ячейки
         
+
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            tableView.beginUpdates()
+            notesTuplesArray.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            tableView.endUpdates()
+        }
     }
     
     
