@@ -52,6 +52,7 @@ class EditingNotesViewController: UIViewController {
         addConstraints()
         
     }
+
     
     func setUpNavBar() {
         view.backgroundColor = backgroundCollor

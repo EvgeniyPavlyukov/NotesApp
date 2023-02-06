@@ -9,9 +9,10 @@ import UIKit
 
 class NotesViewController: UIViewController, EditingNotesDelegate {
     
-    var dataTuplesArray = [Model]()
-    var notesTuplesArray = [(String, String)]()
+    public var dataTuplesArray = [Model]()
+    public var notesTuplesArray = [(String, String)]()
     var editingVC = EditingNotesViewController()
+    var detailedVC = DetailedViewController()
     
     let userDefaults = UserDefaults.standard
     
@@ -27,6 +28,7 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        print(notesTuplesArray)
         if let fetchedData = userDefaults.data(forKey: "data") {
             let fetchedTuplesArray = try! PropertyListDecoder().decode([Model].self, from: fetchedData) //так как нельзя работать с тюплами в userDefaults кодируем тайтл и текст в дату, сохраняем ее в юзерДелфол, потом при запуске декодим
             dataTuplesArray = fetchedTuplesArray
@@ -50,11 +52,11 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
         navBarSetUp()
         addButtonNote()
         addConstraints()
-        
+        UIRefreshControl().endRefreshing()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         
         let encodedData = try! PropertyListEncoder().encode(dataTuplesArray)
         UserDefaults.standard.set(encodedData, forKey: "data")
@@ -101,10 +103,10 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
         
         
 //        let savedData = userDefaults.set
-        UIRefreshControl().endRefreshing()
+        
         let indexPathNewRow = IndexPath(row: notesTuplesArray.count - 1, section: 0)
         notesTableView.insertRows(at: [indexPathNewRow], with: .automatic)
-        
+        UIRefreshControl().endRefreshing()
     }
     
     
@@ -157,6 +159,12 @@ extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        detailedVC.detailedTitle = notesTuplesArray[indexPath.row].0
+        detailedVC.detailedText = notesTuplesArray[indexPath.row].1
+        notesTuplesArray.remove(at: indexPath.row)
+        navigationController?.pushViewController(detailedVC, animated: true)
+    }
     
 }
 

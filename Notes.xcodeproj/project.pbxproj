@@ -10,6 +10,7 @@
 		3B283F35298D838B00B581A2 /* EditingNotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B283F34298D838B00B581A2 /* EditingNotesViewController.swift */; };
 		3B2C6A58298FD6FE00F90426 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C6A57298FD6FE00F90426 /* Colors.swift */; };
 		3B2C6A65299053D700F90426 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C6A64299053D700F90426 /* Model.swift */; };
+		3B2C6A6B299163B100F90426 /* DetailedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C6A6A299163B100F90426 /* DetailedVC.swift */; };
 		3BE7B5CE298D5C9F00DF31EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE7B5CD298D5C9F00DF31EB /* AppDelegate.swift */; };
 		3BE7B5D0298D5C9F00DF31EB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE7B5CF298D5C9F00DF31EB /* SceneDelegate.swift */; };
 		3BE7B5D2298D5C9F00DF31EB /* NotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE7B5D1298D5C9F00DF31EB /* NotesViewController.swift */; };
@@ -22,6 +23,7 @@
 		3B283F34298D838B00B581A2 /* EditingNotesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingNotesViewController.swift; sourceTree = "<group>"; };
 		3B2C6A57298FD6FE00F90426 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		3B2C6A64299053D700F90426 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		3B2C6A6A299163B100F90426 /* DetailedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedVC.swift; sourceTree = "<group>"; };
 		3BE7B5CA298D5C9F00DF31EB /* Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Notes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BE7B5CD298D5C9F00DF31EB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3BE7B5CF298D5C9F00DF31EB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 				3BE7B5D1298D5C9F00DF31EB /* NotesViewController.swift */,
 				3B2C6A64299053D700F90426 /* Model.swift */,
 				3B283F34298D838B00B581A2 /* EditingNotesViewController.swift */,
+				3B2C6A6A299163B100F90426 /* DetailedVC.swift */,
 				3BE7B5D3298D5C9F00DF31EB /* Main.storyboard */,
 				3BE7B5D6298D5CA900DF31EB /* Assets.xcassets */,
 				3BE7B5D8298D5CA900DF31EB /* LaunchScreen.storyboard */,
@@ -148,6 +151,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3BE7B5D2298D5C9F00DF31EB /* NotesViewController.swift in Sources */,
+				3B2C6A6B299163B100F90426 /* DetailedVC.swift in Sources */,
 				3B2C6A58298FD6FE00F90426 /* Colors.swift in Sources */,
 				3BE7B5CE298D5C9F00DF31EB /* AppDelegate.swift in Sources */,
 				3B2C6A65299053D700F90426 /* Model.swift in Sources */,
