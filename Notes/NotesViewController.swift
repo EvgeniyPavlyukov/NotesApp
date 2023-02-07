@@ -9,6 +9,10 @@ import UIKit
 
 class NotesViewController: UIViewController {
     
+    weak var data = Memory.dataTuplesArray
+    weak var array =
+    
+    var refCounter = 0
     let userDefaults = UserDefaults.standard
     
     var notesTableView: UITableView = {
@@ -26,6 +30,8 @@ class NotesViewController: UIViewController {
     }
 
     override func viewDidLoad() {
+        refCounter += 1
+        print("ref \(refCounter)")
         super.viewDidLoad()
 
         let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
@@ -82,6 +88,7 @@ class NotesViewController: UIViewController {
         addButtonNote()
         addConstraints()
         notesTableView.endUpdates()
+        UIRefreshControl().endRefreshing()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -105,7 +112,7 @@ class NotesViewController: UIViewController {
     }
     
     @objc func addNote() {
-        navigationController?.pushViewController(Assembler.createNewNoteVC(), animated: true)
+        self.navigationController?.pushViewController(Assembler.createNewNoteVC(), animated: true)
     }
     
     func addConstraints() {

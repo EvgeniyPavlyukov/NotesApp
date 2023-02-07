@@ -45,6 +45,8 @@ class DetailedViewController: UIViewController {
         print("DetailedVC is destroied")
     }
     
+   
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

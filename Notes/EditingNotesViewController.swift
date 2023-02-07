@@ -68,12 +68,12 @@ class EditingNotesViewController: UIViewController {
         if let title = noteTitleTextField.text, !noteContentTextView.text.isEmpty, !title.isEmpty {
             let text = noteContentTextView.text!
             let tuple = (title, text)
-            Memory.notesTuplesArray.append(tuple)
-            Memory.dataTuplesArray.append(Model(title: title, text: text))
+//            Memory.notesTuplesArray.append(tuple)
+//            Memory.dataTuplesArray.append(Model(title: title, text: text))
             noteTitleTextField.text?.removeAll()
             noteContentTextView.text.removeAll()
-            let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
-            UserDefaults.standard.set(encodedData, forKey: "data")
+//            let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
+//            UserDefaults.standard.set(encodedData, forKey: "data")
             
             navigationController?.popViewController(animated: true)
             

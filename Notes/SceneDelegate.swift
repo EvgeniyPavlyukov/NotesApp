@@ -15,8 +15,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        let rootView = NotesViewController()
-        let navigationController = UINavigationController(rootViewController: rootView)
+        let navigationController = Assembler.initialVC()
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
 
