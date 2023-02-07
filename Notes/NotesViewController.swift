@@ -7,12 +7,7 @@
 
 import UIKit
 
-class NotesViewController: UIViewController, EditingNotesDelegate {
-    
-    public var dataTuplesArray = [Model]()
-    public var notesTuplesArray = [(String, String)]()
-    var editingVC = EditingNotesViewController()
-    var detailedVC = DetailedViewController()
+class NotesViewController: UIViewController {
     
     let userDefaults = UserDefaults.standard
     
@@ -28,24 +23,49 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        print(notesTuplesArray)
+        let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
+        UserDefaults.standard.set(encodedData, forKey: "data")
+        
+        print(Memory.notesTuplesArray)
         if let fetchedData = userDefaults.data(forKey: "data") {
             let fetchedTuplesArray = try! PropertyListDecoder().decode([Model].self, from: fetchedData) //так как нельзя работать с тюплами в userDefaults кодируем тайтл и текст в дату, сохраняем ее в юзерДелфол, потом при запуске декодим
-            dataTuplesArray = fetchedTuplesArray
-            for i in 0..<dataTuplesArray.count {
-                let title = dataTuplesArray[i].title
-                let text = dataTuplesArray[i].text
+            Memory.dataTuplesArray = fetchedTuplesArray
+            for i in 0 ..< Memory.dataTuplesArray.count {
+                let title = Memory.dataTuplesArray[i].title
+                let text = Memory.dataTuplesArray[i].text
                 let tuple = (title, text)
-                notesTuplesArray.append(tuple)
+                Memory.notesTuplesArray.append(tuple)
             }
-            print(dataTuplesArray)
+            
+            if Memory.notesTuplesArray.count > 0 {
+                let indexPathNewRow = IndexPath(row: Memory.notesTuplesArray.count - 1, section: 0)
+                notesTableView.insertRows(at: [indexPathNewRow], with: .automatic)
+                UIRefreshControl().endRefreshing()
+                notesTableView.endUpdates()
+            } else {
+                
+                Memory.notesTuplesArray.append(("New", "Note"))
+                Memory.dataTuplesArray.append(Model(title: "New", text: "Note"))
+                
+                let indexPathNewRow = IndexPath(row: Memory.notesTuplesArray.count - 1, section: 0)
+                notesTableView.insertRows(at: [indexPathNewRow], with: .automatic)
+                UIRefreshControl().endRefreshing()
+                notesTableView.endUpdates()
+            }
+            
+            print(Memory.dataTuplesArray.count)
+            print(Memory.dataTuplesArray)
+            print(Memory.notesTuplesArray.count)
+            print(Memory.notesTuplesArray)
             
         } else {
-            notesTuplesArray.append(("New Note", "New Text"))
+            print(Memory.dataTuplesArray.count)
+            print(Memory.dataTuplesArray)
+            print(Memory.notesTuplesArray.count)
+            print(Memory.notesTuplesArray)
         }
         
         view.backgroundColor = backgroundCollor
-        self.editingVC.delegate = self
         notesTableView.delegate = self
         notesTableView.dataSource = self
         view.addSubview(notesTableView)
@@ -58,7 +78,7 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        let encodedData = try! PropertyListEncoder().encode(dataTuplesArray)
+        let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
         UserDefaults.standard.set(encodedData, forKey: "data")
     }
 
@@ -76,7 +96,7 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
     }
     
     @objc func addNote() {
-        navigationController?.pushViewController(editingVC, animated: true)
+        navigationController?.pushViewController(EditingNotesViewController(), animated: true)
     }
     
     func addConstraints() {
@@ -93,21 +113,16 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
     
     //MARK: - Delegate
     
-    func obtainNewNoteData(title: String, text: String) {
-        
-        let notesTuple = (title, text)
-        notesTuplesArray.append(notesTuple)
-        
-        dataTuplesArray.append(Model(title: title, text: text))
+//    func obtainNewNoteData(title: String, text: String) {
+//
+//        let notesTuple = (title, text)
+//        notesTuplesArray.append(notesTuple)
+//
+//        dataTuplesArray.append(Model(title: title, text: text))
         
         
         
 //        let savedData = userDefaults.set
-        
-        let indexPathNewRow = IndexPath(row: notesTuplesArray.count - 1, section: 0)
-        notesTableView.insertRows(at: [indexPathNewRow], with: .automatic)
-        UIRefreshControl().endRefreshing()
-    }
     
     
 }
@@ -115,18 +130,16 @@ class NotesViewController: UIViewController, EditingNotesDelegate {
 
 extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
     
-    
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return notesTuplesArray.count ?? 0
+        return Memory.notesTuplesArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
               
-        let label = notesTuplesArray[indexPath.row].0
-        let text = notesTuplesArray[indexPath.row].1
+        let label = Memory.notesTuplesArray[indexPath.row].0
+        let text = Memory.notesTuplesArray[indexPath.row].1
         var cellProperties = cell.defaultContentConfiguration()
         cellProperties.text = label
         cellProperties.textProperties.font = .boldSystemFont(ofSize: 20)
@@ -152,18 +165,18 @@ extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             tableView.beginUpdates()
-            notesTuplesArray.remove(at: indexPath.row)
-            dataTuplesArray.remove(at: indexPath.row)
+            
+            print(indexPath)
             tableView.deleteRows(at: [indexPath], with: .fade)
             tableView.endUpdates()
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        detailedVC.detailedTitle = notesTuplesArray[indexPath.row].0
-        detailedVC.detailedText = notesTuplesArray[indexPath.row].1
-        notesTuplesArray.remove(at: indexPath.row)
-        navigationController?.pushViewController(detailedVC, animated: true)
+        var detailedTitle = Memory.notesTuplesArray[indexPath.row].0
+        var detailedText = Memory.notesTuplesArray[indexPath.row].1
+        Memory.notesTuplesArray.remove(at: indexPath.row)
+        navigationController?.pushViewController(DetailedViewController(), animated: true)
     }
     
 }

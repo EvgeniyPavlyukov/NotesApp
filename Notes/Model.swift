@@ -12,4 +12,9 @@ struct Model: Codable {
     var text: String
 }
 
+class Memory {
+    
+    static var dataTuplesArray = [Model]()
+    static var notesTuplesArray = [(String, String)]()
+}
 

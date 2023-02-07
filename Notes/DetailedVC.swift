@@ -8,16 +8,8 @@
 import Foundation
 import UIKit
 
-protocol DetailedDataDelegate: AnyObject {
-    func passEditedDataBackToRoot(title: String, text: String)
-}
 
 class DetailedViewController: UIViewController {
-    
-    var detailedTitle = ""
-    var detailedText = ""
-    
-    weak var delegate: DetailedDataDelegate!
     
     var detailedTitleTextField: UITextField = {
         var detailedTitleTextField = UITextField()
@@ -59,14 +51,14 @@ class DetailedViewController: UIViewController {
         setUpNavBar()
         self.view.addSubview(detailedTitleTextField)
         self.view.addSubview(detailedContentTextView)
-        detailedContentTextView.text = detailedText
-        detailedTitleTextField.text = detailedTitle
+        detailedContentTextView.text = "detailedText"
+        detailedTitleTextField.text = "detailedTitle"
         detailedTitleTextField.delegate = self
         detailedContentTextView.delegate = self
         
-        detailedTitleTextField.attributedPlaceholder = NSAttributedString(string: detailedTitle,
+        detailedTitleTextField.attributedPlaceholder = NSAttributedString(string: "detailedTitle",
                                                                       attributes: [NSAttributedString.Key.foregroundColor: UIColor.black])
-        detailedContentTextView.text = detailedText
+        detailedContentTextView.text = "detailedText"
         addConstraints()
         
     }
@@ -88,7 +80,7 @@ class DetailedViewController: UIViewController {
         if let title = detailedTitleTextField.text, !detailedContentTextView.text.isEmpty, !title.isEmpty {
             let text = detailedContentTextView.text!
             let notesTuple = (title, text)
-            NotesViewController().notesTuplesArray.append(notesTuple)
+        
             navigationController?.popViewController(animated: true)
             
         } else {
