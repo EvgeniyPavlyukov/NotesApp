@@ -41,6 +41,9 @@ class DetailedViewController: UIViewController {
         return detailedContentTextView
     }()
     
+    deinit {
+        print("DetailedVC is destroied")
+    }
     
     
     override func viewDidLoad() {

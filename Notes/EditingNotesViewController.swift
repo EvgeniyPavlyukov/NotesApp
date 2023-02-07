@@ -37,6 +37,10 @@ class EditingNotesViewController: UIViewController {
         return noteContentTextView
     }()
     
+    deinit {
+        print("NewNoteVC is destroied")
+    }
+    
     override func viewDidLoad() {
         setUpNavBar()
         noteTitleTextField.delegate = self
@@ -63,8 +67,14 @@ class EditingNotesViewController: UIViewController {
         
         if let title = noteTitleTextField.text, !noteContentTextView.text.isEmpty, !title.isEmpty {
             let text = noteContentTextView.text!
+            let tuple = (title, text)
+            Memory.notesTuplesArray.append(tuple)
+            Memory.dataTuplesArray.append(Model(title: title, text: text))
             noteTitleTextField.text?.removeAll()
             noteContentTextView.text.removeAll()
+            let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
+            UserDefaults.standard.set(encodedData, forKey: "data")
+            
             navigationController?.popViewController(animated: true)
             
         } else {
@@ -99,8 +109,8 @@ extension EditingNotesViewController: UITextViewDelegate, UITextFieldDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) { //это имитация плейсхолдера
         if noteContentTextView.textColor == UIColor.lightGray {
-            textView.text = nil
-            textView.textColor = UIColor.black
+            self.noteContentTextView.text = nil
+            self.noteContentTextView.textColor = UIColor.black
         }
     }
     

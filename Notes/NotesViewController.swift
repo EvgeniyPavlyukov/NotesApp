@@ -19,6 +19,11 @@ class NotesViewController: UIViewController {
         notesTableView.backgroundColor = backgroundCollor
         return notesTableView
     }()
+    
+    
+    deinit {
+        print("NotesVC is destroied")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +31,6 @@ class NotesViewController: UIViewController {
         let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
         UserDefaults.standard.set(encodedData, forKey: "data")
         
-        print(Memory.notesTuplesArray)
         if let fetchedData = userDefaults.data(forKey: "data") {
             let fetchedTuplesArray = try! PropertyListDecoder().decode([Model].self, from: fetchedData) //так как нельзя работать с тюплами в userDefaults кодируем тайтл и текст в дату, сохраняем ее в юзерДелфол, потом при запуске декодим
             Memory.dataTuplesArray = fetchedTuplesArray
@@ -36,12 +40,17 @@ class NotesViewController: UIViewController {
                 let tuple = (title, text)
                 Memory.notesTuplesArray.append(tuple)
             }
-            
+            print(Memory.dataTuplesArray.count)
+            print(Memory.dataTuplesArray)
+            print(Memory.notesTuplesArray.count)
+            print(Memory.notesTuplesArray)
+
             if Memory.notesTuplesArray.count > 0 {
                 let indexPathNewRow = IndexPath(row: Memory.notesTuplesArray.count - 1, section: 0)
                 notesTableView.insertRows(at: [indexPathNewRow], with: .automatic)
                 UIRefreshControl().endRefreshing()
                 notesTableView.endUpdates()
+                
             } else {
                 
                 Memory.notesTuplesArray.append(("New", "Note"))
@@ -72,7 +81,7 @@ class NotesViewController: UIViewController {
         navBarSetUp()
         addButtonNote()
         addConstraints()
-        UIRefreshControl().endRefreshing()
+        notesTableView.endUpdates()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -96,7 +105,7 @@ class NotesViewController: UIViewController {
     }
     
     @objc func addNote() {
-        navigationController?.pushViewController(EditingNotesViewController(), animated: true)
+        navigationController?.pushViewController(Assembler.createNewNoteVC(), animated: true)
     }
     
     func addConstraints() {
@@ -110,20 +119,6 @@ class NotesViewController: UIViewController {
         
         NSLayoutConstraint.activate(constraints)
     }
-    
-    //MARK: - Delegate
-    
-//    func obtainNewNoteData(title: String, text: String) {
-//
-//        let notesTuple = (title, text)
-//        notesTuplesArray.append(notesTuple)
-//
-//        dataTuplesArray.append(Model(title: title, text: text))
-        
-        
-        
-//        let savedData = userDefaults.set
-    
     
 }
 
@@ -164,9 +159,14 @@ extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            tableView.beginUpdates()
             
-            print(indexPath)
+            tableView.beginUpdates()
+            Memory.dataTuplesArray.remove(at: indexPath.row)
+            Memory.notesTuplesArray.remove(at: indexPath.row)
+            
+            let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
+            UserDefaults.standard.set(encodedData, forKey: "data")
+            
             tableView.deleteRows(at: [indexPath], with: .fade)
             tableView.endUpdates()
         }
@@ -176,7 +176,7 @@ extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
         var detailedTitle = Memory.notesTuplesArray[indexPath.row].0
         var detailedText = Memory.notesTuplesArray[indexPath.row].1
         Memory.notesTuplesArray.remove(at: indexPath.row)
-        navigationController?.pushViewController(DetailedViewController(), animated: true)
+        navigationController?.pushViewController(Assembler.createEditNoteVC(), animated: true)
     }
     
 }
