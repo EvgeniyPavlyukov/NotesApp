@@ -12,7 +12,7 @@ class NewNotesViewController: UIViewController {
     
     var noteTitleTextField: UITextField = {
         var noteTitleTextField = UITextField()
-        noteTitleTextField.backgroundColor = backgroundCollor
+        noteTitleTextField.backgroundColor = backgroundColor
         noteTitleTextField.translatesAutoresizingMaskIntoConstraints = false
         noteTitleTextField.borderStyle = .roundedRect
         noteTitleTextField.layer.cornerRadius = 5.0
@@ -38,9 +38,8 @@ class NewNotesViewController: UIViewController {
         return noteContentTextView
     }()
     
-    deinit {
-        print("NewNoteVC is destroied")
-    }
+    
+    //MARK: - Цикл экрана
     
     override func viewDidLoad() {
         setUpNavBar()
@@ -51,11 +50,16 @@ class NewNotesViewController: UIViewController {
         addConstraints()
         
     }
+    
+    deinit {
+        print("NewNoteVC is destroied")
+    }
+    
 
-
+    //MARK: - View set up
     
     func setUpNavBar() {
-        self.view.backgroundColor = backgroundCollor
+        self.view.backgroundColor = backgroundColor
         self.navigationItem.largeTitleDisplayMode = .never
         let textAttributes = [NSAttributedString.Key.foregroundColor: textColorConstant]
         self.navigationController?.navigationBar.titleTextAttributes = textAttributes
@@ -64,6 +68,8 @@ class NewNotesViewController: UIViewController {
         self.navigationItem.rightBarButtonItem?.tintColor = colorForButtons
         self.navigationController?.navigationBar.tintColor = colorForButtons
     }
+    
+    
     
     @objc func saveNewNote() {
         
@@ -83,6 +89,9 @@ class NewNotesViewController: UIViewController {
 
     }
     
+    
+    //MARK: - Constraints
+    
     func addConstraints() {
         var constraints = [NSLayoutConstraint]()
         
@@ -98,12 +107,15 @@ class NewNotesViewController: UIViewController {
         constraints.append(noteContentTextView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15.0))
         constraints.append(noteContentTextView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15.0))
         constraints.append(noteContentTextView.topAnchor.constraint(equalTo: noteTitleTextField.bottomAnchor, constant: 15.0))
-        constraints.append(noteContentTextView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40.0))
+        constraints.append(noteContentTextView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -10.0))
         
         NSLayoutConstraint.activate(constraints)
     }
     
 }
+
+
+    //MARK: - TextView Delegate
 
 extension NewNotesViewController: UITextViewDelegate, UITextFieldDelegate {
     

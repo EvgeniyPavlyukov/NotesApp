@@ -3,19 +3,19 @@ import UIKit
 class Assembler {
     
     class func createNotesVC() -> UIViewController {
-        var notesVC = NotesViewController()
+        let notesVC = NotesViewController()
         
         return notesVC
     }
     
     class func createEditNoteVC() -> UIViewController {
-        var editingVC = DetailedViewController()
+        let editingVC = DetailedViewController()
         
         return editingVC
     }
     
     class func createNewNoteVC() -> UIViewController {
-        var newNoteVC = EditingNotesViewController()
+        let newNoteVC = NewNotesViewController()
         
         return newNoteVC
     }
