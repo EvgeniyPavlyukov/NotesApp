@@ -6,11 +6,9 @@
 //
 
 import UIKit
-
+import Foundation
 
 class NewNotesViewController: UIViewController {
-    
-    var output: ViewOutput!
     
     var noteTitleTextField: UITextField = {
         var noteTitleTextField = UITextField()
@@ -41,21 +39,24 @@ class NewNotesViewController: UIViewController {
     }()
     
     deinit {
-        print("EditingVC is destroied")
+        print("NewNoteVC is destroied")
     }
     
     override func viewDidLoad() {
         setUpNavBar()
-        self.view.addSubview(noteTitleTextField)
-        self.view.addSubview(noteContentTextView)
+        noteTitleTextField.delegate = self
+        noteContentTextView.delegate = self
+        view.addSubview(noteTitleTextField)
+        view.addSubview(noteContentTextView)
         addConstraints()
         
     }
 
+
     
     func setUpNavBar() {
         self.view.backgroundColor = backgroundCollor
-        navigationItem.largeTitleDisplayMode = .never
+        self.navigationItem.largeTitleDisplayMode = .never
         let textAttributes = [NSAttributedString.Key.foregroundColor: textColorConstant]
         self.navigationController?.navigationBar.titleTextAttributes = textAttributes
         self.title = "New Note"
@@ -68,19 +69,19 @@ class NewNotesViewController: UIViewController {
         
         if let title = noteTitleTextField.text, !noteContentTextView.text.isEmpty, !title.isEmpty {
             let text = noteContentTextView.text!
+            Memory.dataTuplesArray.append(Model(title: title, text: text))
+            let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
+            UserDefaults.standard.set(encodedData, forKey: "data")
             noteTitleTextField.text?.removeAll()
             noteContentTextView.text.removeAll()
-            navigationController?.popToRootViewController(animated: true)
-            DispatchQueue.main.async {
-                self.output.saveNewNote(title: title, text: text)
-            }
+            
+            navigationController?.popViewController(animated: true)
             
         } else {
             print("Error Data")
         }
 
     }
- 
     
     func addConstraints() {
         var constraints = [NSLayoutConstraint]()
@@ -108,8 +109,8 @@ extension NewNotesViewController: UITextViewDelegate, UITextFieldDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) { //это имитация плейсхолдера
         if noteContentTextView.textColor == UIColor.lightGray {
-            textView.text = nil
-            textView.textColor = UIColor.black
+            self.noteContentTextView.text = nil
+            self.noteContentTextView.textColor = UIColor.black
         }
     }
     
