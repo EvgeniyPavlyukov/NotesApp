@@ -56,41 +56,41 @@ class DetailedViewController: UIViewController {
         setUpNavBar()
         self.view.addSubview(detailedTitleTextField)
         self.view.addSubview(detailedContentTextView)
-        detailedContentTextView.text = "detailedText"
-        detailedTitleTextField.text = "detailedTitle"
+        detailedContentTextView.text = Memory.detailedText
+        detailedTitleTextField.text = Memory.detailedTitle
         detailedTitleTextField.delegate = self
         detailedContentTextView.delegate = self
         
-        detailedTitleTextField.attributedPlaceholder = NSAttributedString(string: "detailedTitle",
+        detailedTitleTextField.attributedPlaceholder = NSAttributedString(string: Memory.detailedTitle,
                                                                       attributes: [NSAttributedString.Key.foregroundColor: UIColor.black])
-        detailedContentTextView.text = "detailedText"
+        detailedContentTextView.text = Memory.detailedText
         addConstraints()
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         
     }
     
     
     func setUpNavBar() {
-        view.backgroundColor = backgroundCollor
-        navigationItem.largeTitleDisplayMode = .never
+        self.view.backgroundColor = backgroundCollor
+        self.navigationItem.largeTitleDisplayMode = .never
         let textAttributes = [NSAttributedString.Key.foregroundColor: textColorConstant]
-        navigationController?.navigationBar.titleTextAttributes = textAttributes
+        self.navigationController?.navigationBar.titleTextAttributes = textAttributes
         title = "New Note"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveNewNote))
-        navigationItem.rightBarButtonItem?.tintColor = colorForButtons
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveNewNote))
+        self.navigationItem.rightBarButtonItem?.tintColor = colorForButtons
         self.navigationController?.navigationBar.tintColor = colorForButtons
     }
     
     @objc func saveNewNote() {
         
-        if let title = detailedTitleTextField.text, !detailedContentTextView.text.isEmpty, !title.isEmpty {
-            let text = detailedContentTextView.text!
-            let notesTuple = (title, text)
+        Memory.dataTuplesArray[Memory.indexCell].title = detailedTitleTextField.text ?? ""
+        Memory.dataTuplesArray[Memory.indexCell].text = detailedContentTextView.text ?? ""
         
-            navigationController?.popViewController(animated: true)
-            
-        } else {
-            print("Error Data")
-        }
+        navigationController?.popViewController(animated: true)
 
     }
     

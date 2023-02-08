@@ -13,7 +13,9 @@ struct Model: Codable {
 }
 
 class Memory {
-    
+    static var indexCell = Int()
+    static var detailedTitle = String()
+    static var detailedText = String()
     static var dataTuplesArray = [Model]()
     static var notesTuplesArray = [(String, String)]()
 }

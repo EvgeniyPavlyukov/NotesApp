@@ -19,11 +19,5 @@ class Assembler {
         
         return newNoteVC
     }
-    
-    class func initialVC() -> UINavigationController {
-        var rootView = createNotesVC()
-        var navigationController = UINavigationController(rootViewController: rootView)
-        
-        return navigationController
-    }
+
 }

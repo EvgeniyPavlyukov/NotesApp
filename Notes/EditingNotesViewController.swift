@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Foundation
 
 class EditingNotesViewController: UIViewController {
     
@@ -51,15 +52,16 @@ class EditingNotesViewController: UIViewController {
         
     }
 
+
     
     func setUpNavBar() {
-        view.backgroundColor = backgroundCollor
-        navigationItem.largeTitleDisplayMode = .never
+        self.view.backgroundColor = backgroundCollor
+        self.navigationItem.largeTitleDisplayMode = .never
         let textAttributes = [NSAttributedString.Key.foregroundColor: textColorConstant]
-        navigationController?.navigationBar.titleTextAttributes = textAttributes
-        title = "New Note"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveNewNote))
-        navigationItem.rightBarButtonItem?.tintColor = colorForButtons
+        self.navigationController?.navigationBar.titleTextAttributes = textAttributes
+        self.title = "New Note"
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveNewNote))
+        self.navigationItem.rightBarButtonItem?.tintColor = colorForButtons
         self.navigationController?.navigationBar.tintColor = colorForButtons
     }
     
@@ -67,13 +69,11 @@ class EditingNotesViewController: UIViewController {
         
         if let title = noteTitleTextField.text, !noteContentTextView.text.isEmpty, !title.isEmpty {
             let text = noteContentTextView.text!
-            let tuple = (title, text)
-//            Memory.notesTuplesArray.append(tuple)
-//            Memory.dataTuplesArray.append(Model(title: title, text: text))
+            Memory.dataTuplesArray.append(Model(title: title, text: text))
+            let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
+            UserDefaults.standard.set(encodedData, forKey: "data")
             noteTitleTextField.text?.removeAll()
             noteContentTextView.text.removeAll()
-//            let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
-//            UserDefaults.standard.set(encodedData, forKey: "data")
             
             navigationController?.popViewController(animated: true)
             

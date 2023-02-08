@@ -8,12 +8,9 @@
 import UIKit
 
 class NotesViewController: UIViewController {
-    
-    weak var data = Memory.dataTuplesArray
-    weak var array =
-    
-    var refCounter = 0
+
     let userDefaults = UserDefaults.standard
+    var index = 0
     
     var notesTableView: UITableView = {
         let notesTableView = UITableView(frame: .zero, style: .grouped)
@@ -25,89 +22,84 @@ class NotesViewController: UIViewController {
     }()
     
     
-    deinit {
-        print("NotesVC is destroied")
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print(Memory.dataTuplesArray)
+        
+        if index != Memory.dataTuplesArray.count {
+            insertCell()
+        }
+        
+        UIRefreshControl().endRefreshing()
+        notesTableView.endUpdates()
+        notesTableView.reloadData()
     }
 
     override func viewDidLoad() {
-        refCounter += 1
-        print("ref \(refCounter)")
         super.viewDidLoad()
-
-        let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
-        UserDefaults.standard.set(encodedData, forKey: "data")
-        
-        if let fetchedData = userDefaults.data(forKey: "data") {
-            let fetchedTuplesArray = try! PropertyListDecoder().decode([Model].self, from: fetchedData) //так как нельзя работать с тюплами в userDefaults кодируем тайтл и текст в дату, сохраняем ее в юзерДелфол, потом при запуске декодим
-            Memory.dataTuplesArray = fetchedTuplesArray
-            for i in 0 ..< Memory.dataTuplesArray.count {
-                let title = Memory.dataTuplesArray[i].title
-                let text = Memory.dataTuplesArray[i].text
-                let tuple = (title, text)
-                Memory.notesTuplesArray.append(tuple)
-            }
-            print(Memory.dataTuplesArray.count)
-            print(Memory.dataTuplesArray)
-            print(Memory.notesTuplesArray.count)
-            print(Memory.notesTuplesArray)
-
-            if Memory.notesTuplesArray.count > 0 {
-                let indexPathNewRow = IndexPath(row: Memory.notesTuplesArray.count - 1, section: 0)
-                notesTableView.insertRows(at: [indexPathNewRow], with: .automatic)
-                UIRefreshControl().endRefreshing()
-                notesTableView.endUpdates()
-                
-            } else {
-                
-                Memory.notesTuplesArray.append(("New", "Note"))
-                Memory.dataTuplesArray.append(Model(title: "New", text: "Note"))
-                
-                let indexPathNewRow = IndexPath(row: Memory.notesTuplesArray.count - 1, section: 0)
-                notesTableView.insertRows(at: [indexPathNewRow], with: .automatic)
-                UIRefreshControl().endRefreshing()
-                notesTableView.endUpdates()
-            }
-            
-            print(Memory.dataTuplesArray.count)
-            print(Memory.dataTuplesArray)
-            print(Memory.notesTuplesArray.count)
-            print(Memory.notesTuplesArray)
-            
-        } else {
-            print(Memory.dataTuplesArray.count)
-            print(Memory.dataTuplesArray)
-            print(Memory.notesTuplesArray.count)
-            print(Memory.notesTuplesArray)
-        }
         
         view.backgroundColor = backgroundCollor
-        notesTableView.delegate = self
-        notesTableView.dataSource = self
+        self.notesTableView.delegate = self
+        self.notesTableView.dataSource = self
         view.addSubview(notesTableView)
         navBarSetUp()
         addButtonNote()
         addConstraints()
-        notesTableView.endUpdates()
-        UIRefreshControl().endRefreshing()
+        
+        
+        if fetchUserDefaultsData().isEmpty {
+            defaultNewNote()
+            UIRefreshControl().endRefreshing()
+            print(Memory.dataTuplesArray)
+            print("fetched is nil")
+            insertCell()
+        } else {
+            Memory.dataTuplesArray = fetchUserDefaultsData()
+            print(fetchUserDefaultsData())
+        }
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        saveToUserDefaults()
+        index = Memory.dataTuplesArray.count //это нужно для того чтобы понять были ли изменения в array после хождения по экранам, если были то нужно добавить ячейки
+    }
+    
+    func insertCell() {
+        let indexPathNewRow = IndexPath(row: Memory.dataTuplesArray.count - 1, section: 0)
+        notesTableView.insertRows(at: [indexPathNewRow], with: .automatic)
+    }
+    
+    func defaultNewNote() {
+            Memory.dataTuplesArray.append(Model(title: "New", text: "Note"))
+    }
+    
+    func fetchUserDefaultsData() -> [Model] {
+        var fetchedModelArray = [Model]()
+        if let fetchedData = self.userDefaults.data(forKey: "data") {
+            let fetchedDataArray = try! PropertyListDecoder().decode([Model].self, from: fetchedData) //так как нельзя работать с тюплами в userDefaults кодируем тайтл и текст в дату, сохраняем ее в юзерДелфол, потом при запуске декодим
+            fetchedModelArray = fetchedDataArray
+        }
+        return fetchedModelArray
+    }
+    
+    func saveToUserDefaults() {
         let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
         UserDefaults.standard.set(encodedData, forKey: "data")
     }
 
     func navBarSetUp() {
         navigationController?.navigationBar.prefersLargeTitles = true
-        let textAttributes = [NSAttributedString.Key.foregroundColor: textColorConstant]
+        let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor(red: 245/255, green: 185/255, blue: 0/255, alpha: 1)]
         navigationController?.navigationBar.largeTitleTextAttributes = textAttributes
         self.title = "Notes"
     }
     
     func addButtonNote() {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNote))
-        self.navigationItem.rightBarButtonItem?.tintColor = colorForButtons
+        self.navigationItem.rightBarButtonItem?.tintColor = UIColor(red: 245/255, green: 185/255, blue: 0/255, alpha: 1)
         
     }
     
@@ -133,15 +125,15 @@ class NotesViewController: UIViewController {
 extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Memory.notesTuplesArray.count
+        return Memory.dataTuplesArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
               
-        let label = Memory.notesTuplesArray[indexPath.row].0
-        let text = Memory.notesTuplesArray[indexPath.row].1
+        let label = Memory.dataTuplesArray[indexPath.row].title
+        let text = Memory.dataTuplesArray[indexPath.row].text
         var cellProperties = cell.defaultContentConfiguration()
         cellProperties.text = label
         cellProperties.textProperties.font = .boldSystemFont(ofSize: 20)
@@ -154,7 +146,6 @@ extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
         let view = UIView(frame: cell.bounds)
         view.backgroundColor = backgroundCollor
         cell.backgroundView = view //настраиваем задний цвет вьюхи ячейки
-        
 
         return cell
     }
@@ -169,7 +160,6 @@ extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
             
             tableView.beginUpdates()
             Memory.dataTuplesArray.remove(at: indexPath.row)
-            Memory.notesTuplesArray.remove(at: indexPath.row)
             
             let encodedData = try! PropertyListEncoder().encode(Memory.dataTuplesArray)
             UserDefaults.standard.set(encodedData, forKey: "data")
@@ -180,9 +170,9 @@ extension NotesViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var detailedTitle = Memory.notesTuplesArray[indexPath.row].0
-        var detailedText = Memory.notesTuplesArray[indexPath.row].1
-        Memory.notesTuplesArray.remove(at: indexPath.row)
+        Memory.detailedTitle = Memory.dataTuplesArray[indexPath.row].title
+        Memory.detailedText = Memory.dataTuplesArray[indexPath.row].text
+        Memory.indexCell = indexPath.row
         navigationController?.pushViewController(Assembler.createEditNoteVC(), animated: true)
     }
     
