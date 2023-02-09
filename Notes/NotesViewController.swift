@@ -23,7 +23,7 @@ class NotesViewController: UIViewController {
         notesTableView.separatorStyle = .none
         notesTableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         notesTableView.backgroundColor = backgroundColor
-        notesTableView.layer.cornerRadius = 11
+        
         notesTableView.showsVerticalScrollIndicator = false
         return notesTableView
     }()
@@ -37,7 +37,11 @@ class NotesViewController: UIViewController {
         
         if index != Memory.dataTuplesArray.count { //если мы перешли на экран и добавили заметку, то список увеличится на одну заметку, поэтому перед показам экрана проверяем эти измениния для корректного добавления ячейки, чтобы не было ошибок
             insertCell()
+        } else {
+            notesTableView.reloadData()
+            notesTableView.endUpdates()
         }
+        
         
         UIRefreshControl().endRefreshing()
     }
@@ -76,6 +80,7 @@ class NotesViewController: UIViewController {
             insertCell()
         } else {
             Memory.dataTuplesArray = fetchUserDefaultsData()
+            UIRefreshControl().endRefreshing()
             print("fetched successfully")
         }
     }
